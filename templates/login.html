@@ -1,0 +1,21 @@
+{% extends "base.html" %} {% block content %}
+<h1>Log in to Blogz!</h1>
+<p>If you don't have an account, you may <a href="/signup">signup</a> for one</p>
+<form action="/login" method="post">
+    <table>
+        <tr>
+            <td><label for="username">Username</label></td>
+            <td>
+                <input name="username" type="username" {% if username %} value="{{ username['username'] }}" {% endif %}> {% if errors['user'] %}<span class="errors"> {{ errors['user']}} </span>{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td><label for="password">Password</label></td>
+            <td>
+                <input name="password" type="password"> {% if errors['password'] %}<span class="errors"> {{ errors['password']}} </span>{% endif %}
+            </td>
+        </tr>
+    </table>
+    <input type="submit" value="Login">
+</form>
+{% endblock %}
