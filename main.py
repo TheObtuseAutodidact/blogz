@@ -14,12 +14,22 @@ class Blog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120))
     body = db.Column(db.String(300))
-    # owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    def __init__(self, title, body):
+    def __init__(self, title, body, owner):
         self.title = title
         self.body = body
-        # self.owner = owner
+        self.owner = owner
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64), unique=True)
+    password = db.Column(db.String(64))
+    blogs = db.relationship("Blog", backref="owner")
+
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
 
 
 @app.route("/blog")
@@ -45,29 +55,17 @@ def newpost():
             if not body:
                 flash("Body cannot be empty", category="body")
             return render_template("newpost.html")
-            
-        new_post = Blog(title, body)
+        
+        # stand in User/owner until we build the sign in
+        owner = User.query.first()
+
+        new_post = Blog(title, body, owner)
         db.session.add(new_post)
         db.session.commit()
 
         newest_post = Blog.query.order_by(desc(Blog.id)).first()
         return redirect("/blog?id={}".format(newest_post.id))
     return render_template("newpost.html")
-
-
-# @app.route("/", methods=["POST", "GET"])
-# def blog_post():
-#     if request.method == "POST":
-#         title = request.form['blog_title']
-#         body = request.form['blog_post']
-
-#         new_post = Blog(title, body)
-#         db.session.add(new_post)
-#         db.session.commit()
-
-#         return redirect("/")
-    # posts = Blog.query.order_by(desc(Blog.id))
-    # return render_template("index.html", posts=posts)
 
 if __name__ == '__main__':
     app.run()
