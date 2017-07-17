@@ -87,9 +87,19 @@ def signup():
         new_user = User(username, password)
         db.session.add(new_user)
         db.session.commit()
+        user = User.query.filter_by(username=username).first()
+        session['username'] = user.username
         return redirect("/newpost")
     return render_template("signup.html", errors=errors)
 
+
+@app.route("/logout")
+def logout():
+    print(session)
+    del session['username']
+    print(session)
+    
+    return redirect("/login")
 
 
 @app.route("/blog")
@@ -101,6 +111,7 @@ def blog():
         return render_template("show.html", post=post)
     posts = Blog.query.order_by(desc(Blog.id))
     return render_template("blog.html", posts=posts)
+
 
 @app.route("/newpost", methods=["POST", "GET"])
 def newpost():
@@ -116,8 +127,8 @@ def newpost():
                 flash("Body cannot be empty", category="body")
             return render_template("newpost.html")
         
-        # stand in User/owner until we build the sign in
-        owner = User.query.first()
+        # currently breaks if no username in session
+        owner = User.query.filter_by(username=session['username']).first()
 
         new_post = Blog(title, body, owner)
         db.session.add(new_post)
