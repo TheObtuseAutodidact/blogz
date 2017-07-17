@@ -51,6 +51,13 @@ class User(db.Model):
         self.username = username
         self.password = password
 
+@app.before_request
+def require_login():
+    allowed_routes = ["login", "signup", "index", "blog"]
+    print(session)
+    if request.endpoint not in allowed_routes and 'username' not in session:
+        return redirect("/login")
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -99,7 +106,7 @@ def logout():
     del session['username']
     print(session)
     
-    return redirect("/login")
+    return redirect("/blog")
 
 
 @app.route("/blog")
@@ -126,7 +133,7 @@ def newpost():
             if not body:
                 flash("Body cannot be empty", category="body")
             return render_template("newpost.html")
-        
+
         # currently breaks if no username in session
         owner = User.query.filter_by(username=session['username']).first()
 
