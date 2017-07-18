@@ -59,6 +59,12 @@ def require_login():
         return redirect("/login")
 
 
+@app.route("/")
+def index():
+    bloggers = User.query.all()
+    return render_template("index.html", bloggers=bloggers)
+
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     errors = {}

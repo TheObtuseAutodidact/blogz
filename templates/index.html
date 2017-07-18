@@ -1,22 +1,7 @@
-<!--{% extends "base.html" %} {% block content %}
-<form action="/" method="POST">
-    <label for="blog_title">New Title</label>
-    <br>
-    <input type="text" id="blog_title" name="blog_title">
-    <br>
-    <label for="blog_post">New Post</label>
-    <br>
-    <textarea name="blog_post" id="blog_post" cols="30" rows="10"></textarea>
-    <br>
-    <input type="submit">
-</form>
-
-<hr> {% if posts%}
+{% extends "base.html" %} {% block content %}
 <ul>
-
-    {% for post in posts %}
-    <h2>{{post.title}}</h2>
-    <p>{{post.body}}</p>
+    {% for blogger in bloggers %}
+    <li><a href="#">{{blogger.username}}</a></li>
     {% endfor %}
 </ul>
-{% endif %} {% endblock %}-->
+{% endblock %}
