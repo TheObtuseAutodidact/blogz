@@ -9,12 +9,11 @@
 </head>
 
 <body>
-    <a href="/blog">blog</a> {% if session['username'] %}
+    <a href="/">Home</a>
+    <a href="/blog">All posts</a> {% if session['username'] %}
     <a href="/newpost">new post</a>
     <a href="/logout">logout</a> {% else %}
-    <a href="/login">login</a> {% endif %}
-
-    <a href="/">Home</a>{% block content %} {% endblock %}
+    <a href="/login">login</a> {% endif %} {% block content %} {% endblock %}
 </body>
 
 </html>

@@ -117,12 +117,16 @@ def logout():
 
 @app.route("/blog")
 def blog():
+    posts = []
     if request.args:
-        blog_id = int(request.args.get('id'))
-        post = Blog.query.filter_by(id=blog_id).first()
-        print(post)
-        return render_template("show.html", post=post)
-    posts = Blog.query.order_by(desc(Blog.id))
+        if "id" in request.args:
+            blog_id = int(request.args.get('id'))
+            post = Blog.query.filter_by(id=blog_id).first()
+            return render_template("show.html", post=post)
+        if "user" in request.args:
+            user_id = int(request.args.get('user'))
+            posts = Blog.query.filter_by(owner_id=user_id)
+    posts = posts or Blog.query.order_by(desc(Blog.id))
     return render_template("blog.html", posts=posts)
 
 
@@ -140,7 +144,6 @@ def newpost():
                 flash("Body cannot be empty", category="body")
             return render_template("newpost.html")
 
-        # currently breaks if no username in session
         owner = User.query.filter_by(username=session['username']).first()
 
         new_post = Blog(title, body, owner)
