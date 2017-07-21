@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, flash, session
+from flask import Flask, request, render_template, redirect, flash, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import desc
 import os
@@ -119,6 +119,7 @@ def logout():
 
 @app.route("/blog")
 def blog():
+    page=1
     posts = []
     if request.args:
         if "id" in request.args:
@@ -127,8 +128,10 @@ def blog():
             return render_template("show.html", post=post)
         if "user" in request.args:
             user_id = int(request.args.get('user'))
-            posts = Blog.query.filter_by(owner_id=user_id)
-    posts = posts or Blog.query.order_by(desc(Blog.id))
+            posts = Blog.query.filter_by(owner_id=user_id).paginate(page, 5, False)
+        if "page" in request.args:
+            page = int(request.args.get("page"))
+    posts = posts or Blog.query.order_by(desc(Blog.id)).paginate(page, 5, False)
     return render_template("blog.html", posts=posts)
 
 
